@@ -1,3 +1,12 @@
+Note: forked from Instagram/Realtime-Demo to fix compatibility issues with
+updates to Redis, Express and Jade. I have this demo running locally
+through localtunnel with:
+  node@v0.4.5
+  express@2.2.1
+  jade@0.10.4
+  redis@0.6.0
+
+
 Instagram Real-time API Demo App
 
 This source is meant to be a very simple implementation of a server that accepts updates from Instagram's real-time updates API.
