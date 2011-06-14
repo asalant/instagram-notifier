@@ -1,5 +1,23 @@
 var redis = require('redis');
 var settings = require('./settings');
+var crypto = require('crypto');
+
+var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
+
+function isValidRequest(request) {
+    // First, let's verify the payload's integrity by making sure it's
+    // coming from a trusted source. We use the client secret as the key
+    // to the HMAC.
+    var hmac = crypto.createHmac('sha1', settings.CLIENT_SECRET);
+    hmac.update(request.rawBody);
+    var providedSignature = request.headers['x-hub-signature'];
+    var calculatedSignature = hmac.digest(encoding='hex');
+    
+    // If they don't match up or we don't have any data coming over the
+    // wire, then it's not valid.
+    return !((providedSignature != calculatedSignature) || !request.body)
+}
+exports.isValidRequest = isValidRequest;
 
 /*
 
@@ -10,67 +28,68 @@ var settings = require('./settings');
 */
 
 function processGeography(geoName, update){
-	var path = '/v1/geographies/' + update.object_id + '/media/recent/';
-	getMinID(geoName, function(error, minID){
-		var queryString = "?client_id="+ settings.CLIENT_ID;
-		if(minID){
-			queryString += '&min_id=' + minID;
-		} else {
-		    // If this is the first update, just grab the most recent.
-			queryString += '&count=1';
-		}
-		var options = {
-			host: settings.apiHost,
-			// Note that in all implementations, basePath will be ''. Here at
-			// instagram, this aint true ;)
-			path: settings.basePath + path + queryString
-		};
-		if(settings.apiPort){
-		    options['port'] = settings.apiPort;
-		}
+  var path = '/v1/geographies/' + update.object_id + '/media/recent/';
+  console.log("processGeography for " + geoName);
+  getMinID(geoName, function(error, minID){
+    var queryString = "?client_id="+ settings.CLIENT_ID;
+    if(minID){
+      queryString += '&min_id=' + minID;
+    } else {
+        // If this is the first update, just grab the most recent.
+      queryString += '&count=1';
+    }
+    var options = {
+      host: settings.apiHost,
+      // Note that in all implementations, basePath will be ''. Here at
+      // instagram, this aint true ;)
+      path: settings.basePath + path + queryString
+    };
+    if(settings.apiPort){
+        options['port'] = settings.apiPort;
+    }
 
         // Asynchronously ask the Instagram API for new media for a given
         // geography.
-		settings.httpClient.get(options, function(response){
-			var data = '';
-			response.on('data', function(chunk){
-				data += chunk;
-			});
-			response.on('end', function(){
-			    try {
-				    var parsedResponse = JSON.parse(data);
-			    } catch (e) {
-			        console.log('Couldn\'t parse data. Malformed?');
-			        return;
-			    }
-				if(!parsedResponse || !parsedResponse['data']){
-				    console.log('Did not receive data for ' + geoName +':');
-				    console.log(data);
-				    return;
-				}
-				setMinID(geoName, parsedResponse['data']);
-				
-				// Let all the redis listeners know that we've got new media.
-				var r = redis.createClient(
-				        settings.REDIS_PORT,
-				        settings.REDIS_HOST);
-				r.publish('channel:' + geoName, data);
-				r.quit();
-			});
-		});
-	});
+    console.log("processGeography: getting " + path);
+    settings.httpClient.get(options, function(response){
+      var data = '';
+      response.on('data', function(chunk){
+        console.log("Got data...");
+        data += chunk;
+      });
+      response.on('end', function(){
+        console.log("Got end.");
+          try {
+            var parsedResponse = JSON.parse(data);
+          } catch (e) {
+              console.log('Couldn\'t parse data. Malformed?');
+              return;
+          }
+        if(!parsedResponse || !parsedResponse['data']){
+            console.log('Did not receive data for ' + geoName +':');
+            console.log(data);
+            return;
+        }
+        setMinID(geoName, parsedResponse['data']);
+        
+        // Let all the redis listeners know that we've got new media.
+        redisClient.publish('channel:' + geoName, data);
+        console.log("Published: " + data);
+      });
+    });
+  });
 }
 exports.processGeography = processGeography;
 
 function getMedia(callback){
     // This function gets the most recent media stored in redis
-    var r = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
-	r.lrange('media:objects', 0, 14, function(error, media){
-	    // Parse each media JSON to send to callback
-	    media = media.map(function(json){return JSON.parse(json);});
-	    callback(error, media);
-	});
-	r.quit()
+    console.log("getMedia: fetching media");
+  redisClient.lrange('media:objects', 0, 14, function(error, media){
+      console.log("getMedia: got " + media.length + " items");
+      // Parse each media JSON to send to callback
+      media = media.map(function(json){return JSON.parse(json);});
+      callback(error, media);
+  });
 }
 exports.getMedia = getMedia;
 
@@ -90,9 +109,7 @@ exports.getMedia = getMedia;
 */
 
 function getMinID(geoName, callback){
-	var r = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
-	r.get('min-id:channel:' + geoName, callback);
-	r.quit();
+  redisClient.get('min-id:channel:' + geoName, callback);
 }
 exports.getMinID = getMinID;
 
@@ -103,9 +120,8 @@ function setMinID(geoName, data){
     var nextMinID;
     try {
         nextMinID = parseInt(sorted[0].id);
-    	var r = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
-    	r.set('min-id:channel:' + geoName, nextMinID);
-    	r.quit();
+      redisClient.set('min-id:channel:' + geoName, nextMinID);
+      console.log("setMindID: set to " + nextMinID);
     } catch (e) {
         console.log('Error parsing min ID');
         console.log(sorted);
