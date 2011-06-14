@@ -19,8 +19,8 @@ Check it out my fork of the project from https://github.com/asalant/Realtime-Dem
 
 Depending on your platform, you have a number of options for installing Node.js
 and Redis. I used Homebrew on my Mac to install the latest versions. The
-instructions in the project README are fine, but you should use the current
-release version for each.
+instructions in the original project README are fine, but you should use
+the current release version for each.
 
 ## Install Application Dependencies
 
@@ -41,10 +41,10 @@ to publish updates to the app. It does this through webhook callbacks so your
 app needs to be available on the public internet. 
 
 localtunnel is a good solution for this. Follow the installation instructions
-on the localtunnel GitHub page. If you’re a Ruby developer using RVM and
-Bundler, my fork of the realtime app includes an .rvmrc and Gemfile that pull
-in the localtunnel dependency. Just run ‘bundle’ to install it and continue
-with the configuration instructions from the localtunnel README.
+on https://github.com/progrium/localtunnel#readme. If you’re a Ruby developer 
+using RVM and Bundler, my fork of the realtime app includes an .rvmrc and 
+Gemfile that pull in the localtunnel dependency. Just run ‘bundle’ to install 
+it and continue with the configuration instructions from the localtunnel README.
 
 # Configuration
 
