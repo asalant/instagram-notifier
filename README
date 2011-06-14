@@ -6,6 +6,10 @@ through localtunnel with:
   jade@0.10.4
   redis@0.6.0
 
+The instructions below use old versions of Node and Redis. With this
+repo, you should be able to use the latest versions.
+
+
 
 Instagram Real-time API Demo App
 
