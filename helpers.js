@@ -19,6 +19,13 @@ function isValidRequest(request) {
 }
 exports.isValidRequest = isValidRequest;
 
+function debug(msg) {
+  if (settings.debug) {
+    console.log(msg);
+  }
+}
+exports.debug = debug;
+
 /*
 
     Each update that comes from Instagram merely tells us that there's new
@@ -29,7 +36,6 @@ exports.isValidRequest = isValidRequest;
 
 function processGeography(geoName, update){
   var path = '/v1/geographies/' + update.object_id + '/media/recent/';
-  console.log("processGeography for " + geoName);
   getMinID(geoName, function(error, minID){
     var queryString = "?client_id="+ settings.CLIENT_ID;
     if(minID){
@@ -50,15 +56,15 @@ function processGeography(geoName, update){
 
         // Asynchronously ask the Instagram API for new media for a given
         // geography.
-    console.log("processGeography: getting " + path);
+    debug("processGeography: getting " + path);
     settings.httpClient.get(options, function(response){
       var data = '';
       response.on('data', function(chunk){
-        console.log("Got data...");
+        debug("Got data...");
         data += chunk;
       });
       response.on('end', function(){
-        console.log("Got end.");
+        debug("Got end.");
           try {
             var parsedResponse = JSON.parse(data);
           } catch (e) {
@@ -74,7 +80,7 @@ function processGeography(geoName, update){
         
         // Let all the redis listeners know that we've got new media.
         redisClient.publish('channel:' + geoName, data);
-        console.log("Published: " + data);
+        debug("Published: " + data);
       });
     });
   });
@@ -83,9 +89,8 @@ exports.processGeography = processGeography;
 
 function getMedia(callback){
     // This function gets the most recent media stored in redis
-    console.log("getMedia: fetching media");
   redisClient.lrange('media:objects', 0, 14, function(error, media){
-      console.log("getMedia: got " + media.length + " items");
+      debug("getMedia: got " + media.length + " items");
       // Parse each media JSON to send to callback
       media = media.map(function(json){return JSON.parse(json);});
       callback(error, media);
@@ -121,7 +126,6 @@ function setMinID(geoName, data){
     try {
         nextMinID = parseInt(sorted[0].id);
       redisClient.set('min-id:channel:' + geoName, nextMinID);
-      console.log("setMindID: set to " + nextMinID);
     } catch (e) {
         console.log('Error parsing min ID');
         console.log(sorted);

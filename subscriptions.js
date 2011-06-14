@@ -3,6 +3,7 @@ var redis = require('redis'),
     jade = require('jade'),
     io = require('socket.io'),
     settings = require('./settings'),
+    helpers = require('./helpers'),
     app = settings.app,
     subscriptionPattern = 'channel:*',
     socket = io.listen(app);
@@ -16,11 +17,10 @@ var pubSubClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 pubSubClient.psubscribe(subscriptionPattern);
 
 pubSubClient.on('pmessage', function(pattern, channel, message){
-  console.log("Handling pmessage: " + message);
+  helpers.debug("Handling pmessage: " + message);
 
-    
-    /* Every time we receive a message, we check to see if it matches
-       the subscription pattern. If it does, then go ahead and parse it. */
+  /* Every time we receive a message, we check to see if it matches
+     the subscription pattern. If it does, then go ahead and parse it. */
 
   if(pattern == subscriptionPattern){
       try {
@@ -39,7 +39,7 @@ pubSubClient.on('pmessage', function(pattern, channel, message){
         var media = data[index];
         media.meta = {};
         media.meta.location = channelName;
-      redisClient.lpush('media:objects', JSON.stringify(media));
+        redisClient.lpush('media:objects', JSON.stringify(media));
     }
     
     // Send out whole update to the listeners

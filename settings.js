@@ -13,6 +13,7 @@ exports.apiPort = process.env.IG_API_PORT || null;
 exports.basePath = process.env.IG_BASE_PATH || '';
 exports.REDIS_PORT = 6486;
 exports.REDIS_HOST = '127.0.0.1';
+exports.debug = true;
 
 app.set('view engine', 'jade');
 
