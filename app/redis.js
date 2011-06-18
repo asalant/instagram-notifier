@@ -16,5 +16,6 @@ if (process.env.REDISTOGO_URL) {
 function createClient() {
   var client = redis.createClient(PORT, HOST);
   if (AUTH) client.auth(AUTH);
+  return client;
 }
 exports.createClient = createClient;
