@@ -36,7 +36,27 @@ module.exports = {
     subscription.save();
 
     gently.verify();
- },
+  },
+
+  'gets all subscriptions': function() {
+    var client = {};
+    gently.expect(Redis, 'createClient', function() {
+     return client;
+    });
+    gently.expect(client, 'keys', function(pattern, callback) {
+      callback(null, ['subscription:1', 'subscription:2']);
+    });
+    gently.expect(client, 'get', 2, function(key, callback) {
+      assert.includes(key, 'subscription:');
+      callback(null, '{}');
+    });
+        
+    var subscriptions = Subscription.find_all();
+    assert.eql(subscriptions, [ {}, {} ]);
+
+    gently.verify();
+  },
+
 
 
 };

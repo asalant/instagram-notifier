@@ -24,6 +24,19 @@ Subscription.create = function(attributes) {
 };
 exports.create = Subscription.create;
 
+Subscription.find_all = function() {
+  var subscriptions = [];
+  var client = Redis.createClient();
+  client.keys('subscription:*', function(error, keys) {
+    for (index in keys) {
+      client.get(keys[index], function(error, value) {
+        subscriptions.push(JSON.parse(value));
+      });
+    }
+  });
+
+  return subscriptions;
+}
 
 Subscription.prototype.phone = function() {
   return this.attributes['phone'];

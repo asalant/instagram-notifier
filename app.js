@@ -37,7 +37,13 @@ app.configure('production', function(){
 
 // Routes
 
-app.post('/subscribe', function(request, response) {
+// List all subscriptions
+app.get('/subscriptions', function(request, response) {
+
+});
+
+// Create a new subscription
+app.post('/subscriptions', function(request, response) {
   helpers.debug("POST " + request.url); 
   var params = url.parse(request.url, true).query;
   
