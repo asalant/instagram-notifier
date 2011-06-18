@@ -24,9 +24,6 @@ Subscription.create = function(attributes) {
 };
 exports.create = Subscription.create;
 
-Subscription.prototype.save = function() {
-  var client = Redis.createClient();
-}
 
 Subscription.prototype.phone = function() {
   return this.attributes['phone'];
@@ -39,6 +36,3 @@ Subscription.prototype.save = function() {
   });
 };
 
-Subscription.prototype.subscribe = function(callback) {
-  
-};
