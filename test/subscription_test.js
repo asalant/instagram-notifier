@@ -41,7 +41,8 @@ module.exports = {
   'gets all subscriptions': function() {
     var client = {};
     gently.expect(Redis, 'createClient', function() {
-     return client;
+      gently.expect(client, 'quit');
+      return client;
     });
     var ids = ['subscription:1', 'subscription:2'];
     gently.expect(client, 'keys', function(pattern, callback) {
@@ -61,14 +62,16 @@ module.exports = {
   'deletes all subscriptions': function() {
     var client = {};
     gently.expect(Redis, 'createClient', function() {
-     return client;
+      gently.expect(client, 'quit');
+      return client;
     });
     var ids = ['subscription:1', 'subscription:2'];
     gently.expect(client, 'keys', function(pattern, callback) {
       callback(null, ids);
     });
-    gently.expect(client, 'del', function(keys) {
+    gently.expect(client, 'del', function(keys, callback) {
       assert.eql(keys, ids);
+      callback(null);
     });
         
     Subscription.delete_all();
