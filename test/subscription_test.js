@@ -58,6 +58,26 @@ module.exports = {
     gently.verify();
   },
 
+  'deletes all subscriptions': function() {
+    var client = {};
+    gently.expect(Redis, 'createClient', function() {
+     return client;
+    });
+    var ids = ['subscription:1', 'subscription:2'];
+    gently.expect(client, 'keys', function(pattern, callback) {
+      callback(null, ids);
+    });
+    gently.expect(client, 'del', function(keys) {
+      assert.eql(keys, ids);
+    });
+        
+    Subscription.delete_all();
+
+    gently.verify();
+  },
+
+
+
 
 
 };

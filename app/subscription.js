@@ -32,10 +32,20 @@ Subscription.find_all = function() {
       subscriptions = values.map(function(value) {
         return JSON.parse(value);
       });
+      client.quit();
     });
   });
 
   return subscriptions;
+}
+
+Subscription.delete_all = function() {
+  var client = Redis.createClient();
+  client.keys('subscription:*', function(error, keys) {
+    client.del(keys, function(error) {
+      client.quit();
+    });
+  });
 }
 
 Subscription.prototype.phone = function() {
