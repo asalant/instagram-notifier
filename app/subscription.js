@@ -28,11 +28,11 @@ Subscription.find_all = function() {
   var subscriptions = [];
   var client = Redis.createClient();
   client.keys('subscription:*', function(error, keys) {
-    for (index in keys) {
-      client.get(keys[index], function(error, value) {
-        subscriptions.push(JSON.parse(value));
+    client.mget(keys, function(error, values) {
+      subscriptions = values.map(function(value) {
+        return JSON.parse(value);
       });
-    }
+    });
   });
 
   return subscriptions;

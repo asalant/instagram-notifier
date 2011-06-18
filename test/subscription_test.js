@@ -43,16 +43,17 @@ module.exports = {
     gently.expect(Redis, 'createClient', function() {
      return client;
     });
+    var ids = ['subscription:1', 'subscription:2'];
     gently.expect(client, 'keys', function(pattern, callback) {
-      callback(null, ['subscription:1', 'subscription:2']);
+      callback(null, ids);
     });
-    gently.expect(client, 'get', 2, function(key, callback) {
-      assert.includes(key, 'subscription:');
-      callback(null, '{}');
+    gently.expect(client, 'mget', function(keys, callback) {
+      assert.eql(keys, ids);
+      callback(null, ['{"id":1}', '{"id":2}']);
     });
         
     var subscriptions = Subscription.find_all();
-    assert.eql(subscriptions, [ {}, {} ]);
+    assert.eql(subscriptions, [ {id:1}, {id:2} ]);
 
     gently.verify();
   },
