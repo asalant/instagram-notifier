@@ -78,6 +78,46 @@ Instagram.subscribeToGeography = function(params, responseCallback){
   request.end();
 };
 
+
+Instagram.deleteAllSubscriptions = function(params, responseCallback){
+  var data = querystring.stringify({
+    client_id: this.CLIENT_ID,
+    client_secret: this.CLIENT_SECRET,
+    object: 'all',
+ });
+ 
+  console.log("Instagram: removing all subscriptions");
+  
+  var options = {
+    host: this.API_HOST,
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': data.length
+    },
+    path: this.API_PATH
+  };
+
+  var request = Instagram.createRequest(options, function(response) {
+    response.setEncoding('utf8');
+    var body = '';
+    console.log('Instagram API response status: ' + response.statusCode);
+    console.log('Instagram API response headers: ' + JSON.stringify(response.headers));
+    response.on('data', function (chunk) {
+      console.log('Instagram API response: ' + chunk);
+      body += chunk
+    });
+    response.on('end', function() {
+      var data = JSON.parse(body).data;
+      if (data)
+        responseCallback(data);
+    });
+  });
+
+  request.write(data);
+  request.end();
+};
+
 Instagram.createRequest = function(options, callback) {
   var request = http.request(options, callback);
   request.on('error', function(e) {

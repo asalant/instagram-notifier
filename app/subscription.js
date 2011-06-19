@@ -9,7 +9,7 @@ function Subscription(attributes) {
 };
 module.exports = Subscription;
 
-Subscription.create = function(attributes) {
+Subscription.create = function(attributes, callback) {
   attributes['status'] = 'pending';
   var subscription = new Subscription(attributes);
 
@@ -17,12 +17,11 @@ Subscription.create = function(attributes) {
     subscription.attributes['id'] = data.id;
     subscription.attributes['object'] = 'geography';
     subscription.attributes['status'] = 'active';
-    subscription.save();
+    subscription.save(function() {
+      callback(subscription);
+    });
   });
-
-  return subscription;
 };
-exports.create = Subscription.create;
 
 Subscription.find_all = function(callback) {
   var subscriptions = [];
@@ -54,10 +53,12 @@ Subscription.prototype.phone = function() {
   return this.attributes['phone'];
 }
 
-Subscription.prototype.save = function() {
+Subscription.prototype.save = function(callback) {
+  var self = this;
   var client = Redis.createClient();
   client.set('subscription:' + this.attributes.id, JSON.stringify(this.attributes), function() {
     client.quit();
+    callback(self);
   });
 };
 

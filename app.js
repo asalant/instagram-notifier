@@ -49,16 +49,16 @@ app.post('/subscriptions', function(request, response) {
   helpers.debug("POST " + request.url); 
   var params = url.parse(request.url, true).query;
   
-  console.log(request.body);
   if (!request.body['phone'] || !request.body['lat'] || !request.body['lng'])
   {
     response.send(500);
     return;
   }
 
-  var subscription = Subscription.create(request.body);
-  console.log("Created Subscription: %s", subscription.attributes);
-  response.send(subscription.attributes);
+  Subscription.create(request.body, function(subscription) {
+    console.log("Created Subscription: %s", subscription.attributes);
+    response.send(subscription.attributes);
+  });
 });
 
 // The GET callback for each subscription verification.

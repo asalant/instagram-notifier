@@ -18,6 +18,19 @@ module.exports = {
     Instagram.subscribeToGeography({ lat:'1', lng:'2' });
   },
 
+  'removes all subscriptions': function() {
+    gently.expect(Instagram, 'createRequest', function(options, callback) {
+      var request = {};
+      gently.expect(request, 'write', function(data) {
+        assert.includes(data, 'object=all');
+      });
+      gently.expect(request, 'end');
+      return request;
+    });
+    Instagram.deleteAllSubscriptions();
+  },
+
+
 };
 
 

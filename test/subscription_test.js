@@ -14,13 +14,14 @@ module.exports = {
     });
 
 
-    var subscription = Subscription.create({ phone: '+14150000000', lat:1, lng:2 });
-    assert.isNotNull(subscription);
-    assert.equal(subscription.phone(), '+14150000000');
-    assert.equal(subscription.attributes['status'], 'pending');
+    Subscription.create({ phone: '+14150000000', lat:1, lng:2 }, function(subscription) {
+      assert.isNotNull(subscription);
+      assert.equal(subscription.phone(), '+14150000000');
+      assert.equal(subscription.attributes['status'], 'pending');
 
-    gently.verify();
-  },
+      gently.verify();
+    });
+ },
 
   'saves subscription': function () {
     gently.expect(Redis, 'createClient', function() {
@@ -33,9 +34,10 @@ module.exports = {
     });
 
     var subscription = new Subscription({ id:1, phone: '+4150000000' });
-    subscription.save();
-
-    gently.verify();
+    subscription.save(function(saved) {
+      assert.equal(saved, subscription);
+      gently.verify();
+    });
   },
 
   'gets all subscriptions': function() {
