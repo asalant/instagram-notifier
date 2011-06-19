@@ -53,10 +53,11 @@ module.exports = {
       callback(null, ['{"id":1}', '{"id":2}']);
     });
         
-    var subscriptions = Subscription.find_all();
-    assert.eql(subscriptions, [ {id:1}, {id:2} ]);
+    Subscription.find_all(function(subscriptions) {
+      assert.eql(subscriptions, [ {id:1}, {id:2} ]);
+      gently.verify();
+    });
 
-    gently.verify();
   },
 
   'deletes all subscriptions': function() {
@@ -74,9 +75,9 @@ module.exports = {
       callback(null);
     });
         
-    Subscription.delete_all();
-
-    gently.verify();
+    Subscription.delete_all(function() {
+      gently.verify();
+    });
   },
 
 

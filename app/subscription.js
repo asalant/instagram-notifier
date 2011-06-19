@@ -24,26 +24,28 @@ Subscription.create = function(attributes) {
 };
 exports.create = Subscription.create;
 
-Subscription.find_all = function() {
+Subscription.find_all = function(callback) {
   var subscriptions = [];
   var client = Redis.createClient();
   client.keys('subscription:*', function(error, keys) {
     client.mget(keys, function(error, values) {
+      client.quit();
       subscriptions = values.map(function(value) {
         return JSON.parse(value);
       });
-      client.quit();
+      callback(subscriptions);
     });
   });
 
   return subscriptions;
 }
 
-Subscription.delete_all = function() {
+Subscription.delete_all = function(callback) {
   var client = Redis.createClient();
   client.keys('subscription:*', function(error, keys) {
     client.del(keys, function(error) {
       client.quit();
+      callback();
     });
   });
 }

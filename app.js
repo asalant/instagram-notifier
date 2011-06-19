@@ -39,7 +39,9 @@ app.configure('production', function(){
 
 // List all subscriptions
 app.get('/subscriptions', function(request, response) {
-
+  Subscription.find_all(function(subscriptions) {
+    response.send(subscriptions);
+  });
 });
 
 // Create a new subscription
@@ -47,6 +49,7 @@ app.post('/subscriptions', function(request, response) {
   helpers.debug("POST " + request.url); 
   var params = url.parse(request.url, true).query;
   
+  console.log(request.body);
   if (!request.body['phone'] || !request.body['lat'] || !request.body['lng'])
   {
     response.send(500);
