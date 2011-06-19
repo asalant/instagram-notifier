@@ -63,6 +63,10 @@ module.exports = {
   },
 
   'deletes all subscriptions': function() {
+    gently.expect(Instagram, 'deleteAllSubscriptions', function(callback) {
+      callback({ meta: { code: 200 } });
+    });
+
     var client = {};
     gently.expect(Redis, 'createClient', function() {
       gently.expect(client, 'quit');
@@ -81,6 +85,19 @@ module.exports = {
       gently.verify();
     });
   },
+    
+  'does not delete all subscriptions if Instagram fails': function() {
+    gently.expect(Instagram, 'deleteAllSubscriptions', function(callback) {
+      callback({ meta: { code: 500 } });
+    });
+
+    gently.expect(Redis, 'createClient', 0);
+    
+    Subscription.delete_all(function() {
+      gently.verify();
+    });
+  },
+
 
 
 

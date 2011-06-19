@@ -109,8 +109,9 @@ Instagram.deleteAllSubscriptions = function(params, responseCallback){
     });
     response.on('end', function() {
       var data = JSON.parse(body).data;
-      if (data)
+      if (response.statusCode == 200 && data) {
         responseCallback(data);
+      }
     });
   });
 

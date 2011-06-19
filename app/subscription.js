@@ -40,14 +40,19 @@ Subscription.find_all = function(callback) {
 }
 
 Subscription.delete_all = function(callback) {
-  var client = Redis.createClient();
-  client.keys('subscription:*', function(error, keys) {
-    client.del(keys, function(error) {
-      client.quit();
-      callback();
-    });
+  Instagram.deleteAllSubscriptions(function(data) {
+    if (data.meta.code == 200) {
+      var client = Redis.createClient();
+      client.keys('subscription:*', function(error, keys) {
+        client.del(keys, function(error) {
+          client.quit();
+          callback();
+        });
+      });
+    }
   });
 }
+
 
 Subscription.prototype.phone = function() {
   return this.attributes['phone'];

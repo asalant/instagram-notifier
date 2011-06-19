@@ -15,7 +15,9 @@ module.exports = {
       gently.expect(request, 'end');
       return request;
     });
-    Instagram.subscribeToGeography({ lat:'1', lng:'2' });
+    Instagram.subscribeToGeography({ lat:'1', lng:'2' }, function(data) {
+                                  
+    });
   },
 
   'removes all subscriptions': function() {
@@ -27,7 +29,9 @@ module.exports = {
       gently.expect(request, 'end');
       return request;
     });
-    Instagram.deleteAllSubscriptions();
+    Instagram.deleteAllSubscriptions(function(data) {
+
+    });
   },
 
 
