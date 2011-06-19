@@ -23,23 +23,27 @@ Subscription.create = function(attributes, callback) {
   });
 };
 
-Subscription.find_all = function(callback) {
+Subscription.findAll = function(callback) {
   var subscriptions = [];
   var client = Redis.createClient();
   client.keys('subscription:*', function(error, keys) {
-    client.mget(keys, function(error, values) {
+    if (!keys || keys.length === 0) {
       client.quit();
-      subscriptions = values.map(function(value) {
-        return JSON.parse(value);
+      callback([]);
+    }
+    else {
+      client.mget(keys, function(error, values) {
+        client.quit();
+        subscriptions = values.map(function(value) {
+          return JSON.parse(value);
+        });
+        callback(subscriptions);
       });
-      callback(subscriptions);
-    });
+    }
   });
-
-  return subscriptions;
 }
 
-Subscription.delete_all = function(callback) {
+Subscription.deleteAll = function(callback) {
   Instagram.deleteAllSubscriptions(function(data) {
     if (data.meta.code == 200) {
       var client = Redis.createClient();

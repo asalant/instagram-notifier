@@ -10,6 +10,7 @@ $(function() {
   $.ajaxSetup({
     url: '/subscriptions',
     dataType: 'json',
+    processData: false,
     contentType: 'application/json'
   });
 
@@ -26,6 +27,10 @@ $(function() {
       lat: $('#location .lat').text(),
       lng: $('#location .lng').text()
     });
+  });
+
+  $('#unfollow.button').bind('click', function() {
+    $(document).trigger('removeSubscriptions');
   });
 
   $(document).bind('located', function(event, data) {
@@ -52,6 +57,22 @@ $(function() {
       appendSubscription(subscription);
     });
   });
+
+  $(document).bind('subscriptionsRemoved', function(event, data) {
+    $('#subscriptions').hide();
+    $('#subscriptions .subscription').remove();
+  });
+
+  $(document).bind('removeSubscriptions', function(event, data) {
+    $.ajax({
+      type: 'DELETE',
+      success: function(data) {
+        $(document).trigger('subscriptionsRemoved');
+      }
+    });
+  });
+
+
 
   $(document).bind('subscriptionCreated', function(event, data) {
     $('#subscriptions').show();

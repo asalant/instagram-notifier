@@ -69,8 +69,7 @@ Instagram.subscribeToGeography = function(params, responseCallback){
     });
     response.on('end', function() {
       var data = JSON.parse(body).data;
-      if (data)
-        responseCallback(data);
+      responseCallback(data);
     });
   });
 
@@ -79,23 +78,22 @@ Instagram.subscribeToGeography = function(params, responseCallback){
 };
 
 
-Instagram.deleteAllSubscriptions = function(params, responseCallback){
+Instagram.deleteAllSubscriptions = function(responseCallback){
   var data = querystring.stringify({
     client_id: this.CLIENT_ID,
     client_secret: this.CLIENT_SECRET,
     object: 'all',
  });
  
-  console.log("Instagram: removing all subscriptions");
+  console.log("Instagram: removing all subscriptions with %s", data);
   
   var options = {
     host: this.API_HOST,
     method: 'DELETE',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length': data.length
+      'Content-Length': 0
     },
-    path: this.API_PATH
+    path: this.API_PATH + "?" + data
   };
 
   var request = Instagram.createRequest(options, function(response) {
@@ -108,14 +106,10 @@ Instagram.deleteAllSubscriptions = function(params, responseCallback){
       body += chunk
     });
     response.on('end', function() {
-      var data = JSON.parse(body).data;
-      if (response.statusCode == 200 && data) {
-        responseCallback(data);
-      }
+      responseCallback(response.statusCode == 200 ? JSON.parse(body) : {});
     });
   });
 
-  request.write(data);
   request.end();
 };
 

@@ -40,6 +40,26 @@ module.exports = {
     });
   },
 
+  'DELETE /subscriptions removes subscription': function() {
+    gently.expect(Subscription, 'deleteAll', function(attributes, callback) {
+      callback();
+    });
+
+    assert.response(app, {
+      url: '/subscriptions',
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' }
+    }, {
+      status: 200,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' }
+    },
+    function(response) {
+      gently.verify();
+    });
+
+  },
+
+
 };
 
 

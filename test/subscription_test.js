@@ -55,8 +55,25 @@ module.exports = {
       callback(null, ['{"id":1}', '{"id":2}']);
     });
         
-    Subscription.find_all(function(subscriptions) {
+    Subscription.findAll(function(subscriptions) {
       assert.eql(subscriptions, [ {id:1}, {id:2} ]);
+      gently.verify();
+    });
+
+  },
+
+    'finds no subscriptions': function() {
+    var client = {};
+    gently.expect(Redis, 'createClient', function() {
+      gently.expect(client, 'quit');
+      return client;
+    });
+    gently.expect(client, 'keys', function(pattern, callback) {
+      callback(null, null);
+    });
+        
+    Subscription.findAll(function(subscriptions) {
+      assert.eql(subscriptions, []);
       gently.verify();
     });
 
@@ -81,7 +98,7 @@ module.exports = {
       callback(null);
     });
         
-    Subscription.delete_all(function() {
+    Subscription.deleteAll(function() {
       gently.verify();
     });
   },
@@ -93,7 +110,7 @@ module.exports = {
 
     gently.expect(Redis, 'createClient', 0);
     
-    Subscription.delete_all(function() {
+    Subscription.deleteAll(function() {
       gently.verify();
     });
   },

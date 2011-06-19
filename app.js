@@ -39,7 +39,8 @@ app.configure('production', function(){
 
 // List all subscriptions
 app.get('/subscriptions', function(request, response) {
-  Subscription.find_all(function(subscriptions) {
+  helpers.debug("GET " + request.url); 
+  Subscription.findAll(function(subscriptions) {
     response.send(subscriptions);
   });
 });
@@ -61,6 +62,14 @@ app.post('/subscriptions', function(request, response) {
   });
 });
 
+// Remove all subscriptions
+app.delete('/subscriptions', function(request, response) {
+  helpers.debug("DELETE " + request.url); 
+  Subscription.deleteAll(function(data) {
+    response.send({});
+  });
+});
+
 // The GET callback for each subscription verification.
 app.get('/callbacks/geo', function(request, response){
   helpers.debug("GET " + request.url); 
@@ -71,7 +80,7 @@ app.get('/callbacks/geo', function(request, response){
 // The POST callback for Instagram to call every time there's an update
 // to one of our subscriptions.
 app.post('/callbacks/geo', function(request, response){
-  helpers.debug("PUT " + request.url);
+  helpers.debug("POST " + request.url);
 
   // First, let's verify the payload's integrity
   if(!helpers.isValidRequest(request))
