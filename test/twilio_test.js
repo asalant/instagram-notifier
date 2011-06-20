@@ -21,9 +21,9 @@ module.exports = {
 
   // Actually sends SMS so not great for unit testing but good for
   // development and debugging
-  'testSendsSMS': function(){
-   twilio.sendSMS({to: '+14156405816', body: 'test through Twilio'});
-  } 
+  // 'testSendsSMS': function(){
+  //  twilio.sendSMS({to: '+14156405816', body: 'test through Twilio'});
+  // } 
 };
 
 
