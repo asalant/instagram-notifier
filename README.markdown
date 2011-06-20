@@ -164,3 +164,6 @@ I hope this helps you out and if you come up with improvements or cool hacks of
 your own, definitely let me know.
 
 
+# Testing
+
+Consider using http://vowsjs.org/

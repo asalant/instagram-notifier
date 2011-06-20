@@ -45,26 +45,23 @@ Twilio.prototype.sendSMS = function(params){
 
   var request = this.createRequest(options,
    function(response) {
-      console.log('STATUS: ' + response.statusCode);
-      //console.log('HEADERS: ' + JSON.stringify(response.headers));
-      response.setEncoding('utf8');
-      response.on('data', function (chunk) {
-        console.log('BODY: ' + chunk);
-      });
-    }
-  );
-
-  request.on('error', function(e) {
-    console.log('ERROR: ' + e.message);
-  });
-
-  request.on('end', function(e) {
-    //console.log('DONE');
+    response.setEncoding('utf8');
+    var body = '';
+    console.log('Twilio response status: ' + response.statusCode);
+    console.log('Twilio response headers: ' + JSON.stringify(response.headers));
+    response.on('data', function (chunk) {
+      console.log('Twilio response: ' + chunk);
+      body += chunk
+    });
+    response.on('end', function() {
+      var data = JSON.parse(body).data;
+      responseCallback(data);
+    });
   });
 
   request.write(data);
   request.end();
-};
+}
 
 Twilio.prototype.createRequest = function(options, callback) {
   return http.request(options, callback);

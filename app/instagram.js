@@ -18,7 +18,8 @@
 */
 
 var http = require('https'),
-    querystring = require('querystring');
+    querystring = require('querystring'),
+    crypto = require('crypto');
 
 
 function Instagram() {}  
@@ -42,7 +43,7 @@ Instagram.subscribeToGeography = function(params, responseCallback){
     aspect: 'media',
     lat: params.lat,
     lng: params.lng,
-    radius: 500,
+    radius: 5000,
     callback_url: this.CALLBACK_HOST + this.CALLBACK_PATH
   });
  
@@ -113,6 +114,10 @@ Instagram.deleteAllSubscriptions = function(responseCallback){
   request.end();
 };
 
+Instagram.getRecentForGeography = function (geographyId, options, callback) {
+  callback([]);
+}
+
 Instagram.createRequest = function(options, callback) {
   var request = http.request(options, callback);
   request.on('error', function(e) {
@@ -120,6 +125,22 @@ Instagram.createRequest = function(options, callback) {
   });
   return request;
 };
+
+Instagram.isValidHubRequest = function (request) {
+    // First, let's verify the payload's integrity by making sure it's
+    // coming from a trusted source. We use the client secret as the key
+    // to the HMAC.
+    var hmac = crypto.createHmac('sha1', this.CLIENT_SECRET);
+    hmac.update(request.rawBody);
+    var providedSignature = request.headers['x-hub-signature'];
+    var calculatedSignature = hmac.digest(encoding='hex');
+    
+    // If they don't match up or we don't have any data coming over the
+    // wire, then it's not valid.
+    return !((providedSignature != calculatedSignature) || !request.body)
+}
+
+
 
 
 

@@ -15,7 +15,9 @@ module.exports = {
       gently.expect(request, 'end');
       return request;
     });
-    twilio.sendSMS({to: '+14156405816', body: 'test through Twilio'});
+    twilio.sendSMS({to: '+14156405816', body: 'test through Twilio'}, function(response) {
+      gently.verify();             
+    });
   },
 
   // Actually sends SMS so not great for unit testing but good for

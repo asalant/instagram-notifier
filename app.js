@@ -6,6 +6,7 @@
 var url = require('url'),
   settings = require('./app/settings'),
   helpers = require('./app/helpers'),
+  Instagram = require('./app/instagram'),
   Subscription = require('./app/subscription');
 
 /**
@@ -80,26 +81,33 @@ app.get('/callbacks/geo', function(request, response){
 // The POST callback for Instagram to call every time there's an update
 // to one of our subscriptions.
 app.post('/callbacks/geo', function(request, response){
-  helpers.debug("POST " + request.url);
+  console.log("POST " + request.url);
 
   // First, let's verify the payload's integrity
-  if(!helpers.isValidRequest(request))
+  if(!Instagram.isValidHubRequest(request)) {
+    console.log('Error: invalid subscription callback request');
     response.send('FAIL');
+  }
 
   // Go through and process each update. Note that every update doesn't
   // include the updated data - we use the data in the update to query
   // the Instagram API to get the data we want.
   var updates = request.body;
   console.log(updates);
-  // var geoName = request.params.geoName;
-  // for(index in updates){
-  //   var update = updates[index];
-  //   if(update['object'] == "geography") {
-  //     helpers.debug("Processing update: " + update);
-  //     helpers.processGeography(geoName, update);
-  //   }
-  // }
-  helpers.debug("Processed " + updates.length + " updates");
+  for (index in updates){
+    var update = updates[index];
+    if (update['object'] != "geography")
+      continue;
+
+    console.log("Processing update: %j",update);
+    var subscription = Subscription.find(update.subscription_id, function(subscription) {
+      subscription.update({ geography_id: update.object_id });
+      Instagram.getRecentForGeography(update.geography_id, { count: 1 }, function(posts) {
+        subscription.notify(posts);
+      });
+    });
+  }
+  console.log("Processed %d updates", updates.length);
   response.send('OK');
 });
 

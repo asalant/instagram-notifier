@@ -40,6 +40,31 @@ module.exports = {
     });
   },
 
+  'updates subscription': function() {
+    var subscription = new Subscription({ id: 1, name: 'name' });
+    gently.expect(subscription, 'save', function(callback) { callback() });
+    subscription.update({ id: 2, phone: '123' }, function() {
+      assert.eql(subscription.attributes, { id: 2, name: 'name', phone: '123' });                 
+    });
+  },
+
+  'finds a subscription': function() {
+    var client = {};
+    gently.expect(Redis, 'createClient', function() {
+      gently.expect(client, 'quit');
+      return client;
+    });
+    gently.expect(client, 'get', function(key, callback) { 
+      callback(null, '{ "id":1 }') 
+    });
+
+    Subscription.find('foo', function(subscription) {
+      assert.eql(subscription.attributes, { id: 1 });
+      gently.verify();
+    });
+      
+  },
+
   'gets all subscriptions': function() {
     var client = {};
     gently.expect(Redis, 'createClient', function() {
