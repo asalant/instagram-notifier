@@ -23,7 +23,7 @@ Twilio.prototype.echo = function(str) {
   return str;
 }
 
-Twilio.prototype.sendSMS = function(params){
+Twilio.prototype.sendSMS = function(params, responseCallback){
   var data = querystring.stringify({
     From: this.FROM_PHONE,
     To: params['to'],
@@ -55,7 +55,8 @@ Twilio.prototype.sendSMS = function(params){
     });
     response.on('end', function() {
       var data = JSON.parse(body).data;
-      responseCallback(data);
+      if (responseCallback)
+        responseCallback(data);
     });
   });
 

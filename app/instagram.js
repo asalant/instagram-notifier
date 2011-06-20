@@ -27,7 +27,8 @@ module.exports = Instagram;
 
 Instagram.configure = function(options) {
   this.API_HOST = 'api.instagram.com';
-  this.API_PATH = '/v1/subscriptions';
+  this.API_SUBSCRIPTIONS_PATH = '/v1/subscriptions';
+  this.API_GEOGRAPHIES_PATH = '/v1/geographies';
   this.CALLBACK_HOST = options.callback_host;
   this.CALLBACK_PATH = '/callbacks/geo';
   this.CLIENT_ID = options.client_id;
@@ -56,7 +57,7 @@ Instagram.subscribeToGeography = function(params, responseCallback){
       'Content-Type': 'application/x-www-form-urlencoded',
       'Content-Length': data.length
     },
-    path: this.API_PATH
+    path: this.API_SUBSCRIPTIONS_PATH
   };
 
   var request = Instagram.createRequest(options, function(response) {
@@ -86,7 +87,7 @@ Instagram.deleteAllSubscriptions = function(responseCallback){
     object: 'all',
  });
  
-  console.log("Instagram: removing all subscriptions with %s", data);
+  console.log("Instagram: removing all subscriptions with %j", data);
   
   var options = {
     host: this.API_HOST,
@@ -94,7 +95,7 @@ Instagram.deleteAllSubscriptions = function(responseCallback){
     headers: {
       'Content-Length': 0
     },
-    path: this.API_PATH + "?" + data
+    path: this.API_SUBSCRIPTIONS_PATH + "?" + data
   };
 
   var request = Instagram.createRequest(options, function(response) {
@@ -114,8 +115,39 @@ Instagram.deleteAllSubscriptions = function(responseCallback){
   request.end();
 };
 
-Instagram.getRecentForGeography = function (geographyId, options, callback) {
-  callback([]);
+Instagram.getRecentForGeography = function (geographyId, options, responseCallback) {
+  var params = {
+    client_id: this.CLIENT_ID
+  };
+  for (var p in options) {
+    params[p] = options[p];
+  }
+ 
+  console.log("Instagram: getting recent updates for %j from ", params);
+  
+  var options = {
+    host: this.API_HOST,
+    headers: {
+      'Content-Length': 0
+    },
+    path: this.API_GEOGRAPHIES_PATH + "/" + geographyId + "/media/recent?" +  querystring.stringify(params)
+  };
+
+  var request = Instagram.createRequest(options, function(response) {
+    response.setEncoding('utf8');
+    var body = '';
+    console.log('Instagram API response status: ' + response.statusCode);
+    console.log('Instagram API response headers: ' + JSON.stringify(response.headers));
+    response.on('data', function (chunk) {
+      console.log('Instagram API response: ' + chunk);
+      body += chunk
+    });
+    response.on('end', function() {
+      responseCallback(response.statusCode == 200 ? JSON.parse(body).data : {});
+    });
+  });
+
+  request.end();
 }
 
 Instagram.createRequest = function(options, callback) {

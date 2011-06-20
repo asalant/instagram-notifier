@@ -1,7 +1,8 @@
 var http = require('https'),
     querystring = require('querystring'),
     Redis = require('./redis'),
-    Instagram = require('./instagram');
+    Instagram = require('./instagram'),
+    twilio = new (require('../app/twilio.js'));
 
 
 function Subscription(attributes) {
@@ -89,11 +90,12 @@ Subscription.prototype.update = function(attributes, callback) {
 
 Subscription.prototype.notify = function(posts, callback) {
   for (var index in posts) {
+    var post = posts[index];
     var sms = {
       to: this.attributes.phone,
       body: 'Update from @' + post.user.username + ': instagram://media?id=' + post.id
     };
-    Twilio.sendSMS(sms, function() {
+    twilio.sendSMS(sms, function() {
       console.log("Twilio: sent %j", sms);
     });
   }

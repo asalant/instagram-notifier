@@ -23,7 +23,7 @@ $(function() {
 
   $('#follow.button').bind('click', function() {
     $(document).trigger('createSubscription', { 
-      phone: '+4156405816',
+      phone: '+14156405816',
       lat: $('#location .lat').text(),
       lng: $('#location .lng').text()
     });
