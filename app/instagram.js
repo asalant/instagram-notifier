@@ -44,7 +44,7 @@ Instagram.subscribeToGeography = function(params, responseCallback){
     aspect: 'media',
     lat: params.lat,
     lng: params.lng,
-    radius: 100,
+    radius: 150,
     callback_url: this.CALLBACK_HOST + this.CALLBACK_PATH
   });
  
