@@ -4,15 +4,9 @@ $(function() {
   }, function() {
     $(document).trigger('located', {});
   },
-  { frequency: 2000 });
+  { frequency: 1000 });
 
-  navigator.geolocation.getCurrentPosition(function(position) {
-    $(document).trigger('located', { position: position });
-  }, function() {
-    $(document).trigger('located', {});
-  });
-
-  $('#subscriptions, #follow.button').hide();
+  $('#subscriptions, #location .found, #location .not_found').hide();
 
   $.ajaxSetup({
     url: '/subscriptions',
@@ -47,8 +41,9 @@ $(function() {
         lng: data.position.coords.longitude.toFixed(6),
         accuracy: data.position.coords.accuracy
       };
-      $('button#follow').after("<div>Got update " + JSON.stringify(position) + "</div>");
-      if (position.accuracy < parseInt($('#location .accuracy').text())) {
+      //$('button#follow').after("<div>Got update " + JSON.stringify(position) + "</div>");
+      if (position.accuracy < 1000 &&
+          position.accuracy < parseInt($('#location .accuracy').text())) {
         $('#location .lat').html(position.lat);
         $('#location .lng').html(position.lng);
         $('#location .accuracy').html(position.accuracy);
@@ -56,10 +51,12 @@ $(function() {
           attr('href', 'http://maps.google.com/maps?z=14&q=' + position.lat + ',' + position.lng +
               '%20(Found%20you%20here)');
       }
-      $('#follow.button').show();
+      $('#location .finding, #location .not_found').hide();
+      $('#location .found').show();
     }
     else {
-      $('#location').html('Unable to find your current location');
+      $('#location .finding, #location .found').hide();
+      $('#location .not_found').show();
     }
   });
 
