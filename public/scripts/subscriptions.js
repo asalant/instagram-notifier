@@ -4,7 +4,7 @@ $(function() {
   }, function() {
     $(document).trigger('located', {});
   },
-  { frequency: 1000 });
+  { frequency: 1000, enableHighAccuracy: true });
 
   $('#subscriptions, #location .found, #location .not_found').hide();
 
@@ -42,8 +42,8 @@ $(function() {
         accuracy: data.position.coords.accuracy
       };
       $('#subscriptions').after("<div>Got update " + JSON.stringify(position) + "</div>");
-      if (position.accuracy < 1000 &&
-          position.accuracy < parseInt($('#location .accuracy').text())) {
+      if (position.accuracy <= 1000 &&
+          position.accuracy <= parseInt($('#location .accuracy').text())) {
         $('#location .lat').html(position.lat);
         $('#location .lng').html(position.lng);
         $('#location .accuracy').html(position.accuracy);
