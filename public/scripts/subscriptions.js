@@ -1,5 +1,5 @@
 $(function() {
-  navigator.geolocation.watchPosition(function(position) {
+  var watchId = navigator.geolocation.watchPosition(function(position) {
     $(document).trigger('located', { position: position });
   }, function() {
     $(document).trigger('located', {});
@@ -41,9 +41,12 @@ $(function() {
         lng: data.position.coords.longitude.toFixed(6),
         accuracy: data.position.coords.accuracy
       };
+      var currentAccuracy = parseInt($('#location .accuracy').text());
       $('#subscriptions').after("<div>Got update " + JSON.stringify(position) + "</div>");
-      if (position.accuracy <= 1000 &&
-          position.accuracy <= parseInt($('#location .accuracy').text())) {
+      if (position.accuracy <= 1000 && position.accuracy <= currentAccuracy) {
+        if (position.accuracy < 20) {
+           navigator.geolocation.clearWatch(watchId);
+        }
         $('#location .lat').html(position.lat);
         $('#location .lng').html(position.lng);
         $('#location .accuracy').html(position.accuracy);
