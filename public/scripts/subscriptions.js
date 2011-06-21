@@ -1,9 +1,10 @@
 $(function() {
-  navigator.geolocation.getCurrentPosition(function(position) {
+  navigator.geolocation.watchPosition(function(position) {
     $(document).trigger('located', { position: position });
   }, function() {
     $(document).trigger('located', {});
-  });
+  },
+  { frequency: 2000 });
 
   $('#subscriptions, #follow.button').hide();
 
@@ -35,7 +36,6 @@ $(function() {
 
   $(document).bind('located', function(event, data) {
     if (data.position) {
-      for (p in data.position.coords) { console.log(p + ": " + data.position.coords[p]); }
       var position = { 
         lat: data.position.coords.latitude.toFixed(6),
         lng: data.position.coords.longitude.toFixed(6),
