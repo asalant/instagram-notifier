@@ -35,10 +35,11 @@ $(function() {
 
   $(document).bind('located', function(event, data) {
     if (data.position) {
+      for (p in data.position.coords) { console.log(p + ": " + data.position.coords[p]); }
       var position = { 
         lat: data.position.coords.latitude.toFixed(6),
         lng: data.position.coords.longitude.toFixed(6),
-        accuracy: data.position.accuracy
+        accuracy: data.position.coords.accuracy
       };
       $('#location .lat').html(position.lat);
       $('#location .lng').html(position.lng);
