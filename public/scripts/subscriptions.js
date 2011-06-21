@@ -107,7 +107,7 @@ $(function() {
 
   function appendSubscription(subscription) {
     $('#subscriptions ul').append(
-      $('li').append($('<a class="subscription"/>').
+      $('<li/>').append($('<a class="subscription"/>').
       attr('href', createMapLink(subscription.lat, subscription.lng, 'id:' + subscription.geography_id)).
       text(subscription.lat + ',' + subscription.lng + ' (id:' + subscription.geography_id + ')')
     ));
