@@ -110,7 +110,7 @@ $(function() {
   function appendSubscription(subscription) {
     $('#unfollow').before(
       $('<div class="subscription"/>').text(subscription.lat + ',' +
-                                           subscription.lng + ' (' +
+                                           subscription.lng + ' (id:' +
                                            subscription.geography_id + ')')
     );
   }
