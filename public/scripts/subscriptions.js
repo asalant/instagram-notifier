@@ -6,6 +6,12 @@ $(function() {
   },
   { frequency: 2000 });
 
+  navigator.geolocation.getCurrentPosition(function(position) {
+    $(document).trigger('located', { position: position });
+  }, function() {
+    $(document).trigger('located', {});
+  });
+
   $('#subscriptions, #follow.button').hide();
 
   $.ajaxSetup({
