@@ -47,7 +47,7 @@ $(function() {
         $('#location .lng').html(position.lng);
         $('#location .accuracy').html(position.accuracy);
         $('#map_link').
-          attr('href', 'http://maps.google.com/maps?q=' + position.lat + ',' + position.lng +
+          attr('href', 'http://maps.google.com/maps?z=14&q=' + position.lat + ',' + position.lng +
               '%20(Found%20you%20here)');
       }
       $('#follow.button').show();
