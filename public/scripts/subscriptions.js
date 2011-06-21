@@ -41,7 +41,7 @@ $(function() {
         lng: data.position.coords.longitude.toFixed(6),
         accuracy: data.position.coords.accuracy
       };
-      $('button#follow').after("<div>Got update " + JSON.stringify(position) + "</div>");
+      $('#subscriptions').after("<div>Got update " + JSON.stringify(position) + "</div>");
       if (position.accuracy < 1000 &&
           position.accuracy < parseInt($('#location .accuracy').text())) {
         $('#location .lat').html(position.lat);
