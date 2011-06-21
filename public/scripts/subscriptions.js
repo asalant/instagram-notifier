@@ -51,9 +51,7 @@ $(function() {
         $('#location .lng').html(position.lng);
         $('#location .accuracy').html(position.accuracy);
         $('#map_link').
-          attr('href', 'http://maps.google.com/maps?z=14&q=' + position.lat + ',' + position.lng +
-              '%20(Found%20you%20here)');
-        
+          attr('href', createMapLink(position.lat, position.lng, 'Found you here'));
         $('#location .finding, #location .not_found').hide();
         $('#location .found').show();
       }
@@ -109,10 +107,15 @@ $(function() {
 
   function appendSubscription(subscription) {
     $('#unfollow').before(
-      $('<div class="subscription"/>').text(subscription.lat + ',' +
-                                           subscription.lng + ' (id:' +
-                                           subscription.geography_id + ')')
+      $('<a class="subscription"/>').
+      attr('href', createMapLink(subscription.lat, subscription.lng, 'id:' + subscription.geography_id)).
+      text(subscription.lat + ',' + subscription.lng + ' (id:' + subscription.geography_id + ')')
     );
+  }
+
+  function createMapLink(lat, lng, label) {
+    return 'http://maps.google.com/maps?z=14&q=' + lat + ',' + lng +
+              '%20(' + escape(label) + ')';
   }
 
 });
