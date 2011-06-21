@@ -41,11 +41,13 @@ $(function() {
         lng: data.position.coords.longitude.toFixed(6),
         accuracy: data.position.coords.accuracy
       };
-      $('#location .lat').html(position.lat);
-      $('#location .lng').html(position.lng);
-      $('#location .accuracy').html(position.accuracy);
-      $('#map_link').
-        attr('href', 'http://maps.google.com/maps?q=loc:' + position.lat + ',' + position.lng);
+      if (position.accuracy < parseInt($('#location .accuracy').text())) {
+        $('#location .lat').html(position.lat);
+        $('#location .lng').html(position.lng);
+        $('#location .accuracy').html(position.accuracy);
+        $('#map_link').
+          attr('href', 'http://maps.google.com/maps?q=loc:' + position.lat + ',' + position.lng);
+      }
       $('#follow.button').show();
     }
     else {
