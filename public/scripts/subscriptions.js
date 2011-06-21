@@ -4,7 +4,7 @@ $(function() {
   }, function() {
     $(document).trigger('located', {});
   },
-  { frequency: 1000, enableHighAccuracy: true });
+  { frequency: 1000 });
 
   $('#subscriptions, #location .found, #location .not_found').hide();
 
