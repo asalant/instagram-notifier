@@ -3,8 +3,13 @@ script(src="/scripts/subscriptions.js", type="text/javascript")
 div#wrapper
   h2 Current Location
   div#location
-    div.lat 000.000000
-    div.lng 000.000000
+    a#map_link
+      span.lat 000.000000
+      ,
+      span.lng 000.000000
+    div
+      span.accuracy 0
+      span m accuracy
     button#follow.button Follow!
   div#subscriptions 
     h2 Following
