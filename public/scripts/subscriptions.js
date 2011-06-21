@@ -50,9 +50,10 @@ $(function() {
         $('#map_link').
           attr('href', 'http://maps.google.com/maps?z=14&q=' + position.lat + ',' + position.lng +
               '%20(Found%20you%20here)');
+        
+        $('#location .finding, #location .not_found').hide();
+        $('#location .found').show();
       }
-      $('#location .finding, #location .not_found').hide();
-      $('#location .found').show();
     }
     else {
       $('#location .finding, #location .found').hide();
