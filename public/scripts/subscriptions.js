@@ -41,17 +41,19 @@ $(function() {
         lng: data.position.coords.longitude.toFixed(6),
         accuracy: data.position.coords.accuracy
       };
+      console.log("Got update " + JSON.stringify(position));
       if (position.accuracy < parseInt($('#location .accuracy').text())) {
         $('#location .lat').html(position.lat);
         $('#location .lng').html(position.lng);
         $('#location .accuracy').html(position.accuracy);
         $('#map_link').
-          attr('href', 'http://maps.google.com/maps?q=loc:' + position.lat + ',' + position.lng);
+          attr('href', 'http://maps.google.com/maps?q=' + position.lat + ',' + position.lng +
+              '%20(Found%20you%20here)');
       }
       $('#follow.button').show();
     }
     else {
-      $('#location').html('Unable to determine your current location');
+      $('#location').html('Unable to find your current location');
     }
   });
 
