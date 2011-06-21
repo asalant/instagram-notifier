@@ -106,11 +106,11 @@ $(function() {
 
 
   function appendSubscription(subscription) {
-    $('#unfollow').before(
-      $('<a class="subscription"/>').
+    $('#subscriptions ul').append(
+      $('li').append($('<a class="subscription"/>').
       attr('href', createMapLink(subscription.lat, subscription.lng, 'id:' + subscription.geography_id)).
       text(subscription.lat + ',' + subscription.lng + ' (id:' + subscription.geography_id + ')')
-    );
+    ));
   }
 
   function createMapLink(lat, lng, label) {
