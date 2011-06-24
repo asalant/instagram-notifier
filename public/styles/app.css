@@ -83,8 +83,7 @@ a:hover {
    }
 
    
-#wrapper {
-	-webkit-perspective: 800;
+#location, #subscriptions {
 	background: #000;
   margin: 20px;
 	padding: 10px;
@@ -96,4 +95,8 @@ a:hover {
 #location .lat, #location .lng {
   width: 150px;
   text-align: right;
+}
+
+#subscription {
+  margin-top: 300px;
 }

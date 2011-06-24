@@ -81,7 +81,8 @@ module.exports = {
     });
         
     Subscription.findAll(function(subscriptions) {
-      assert.eql(subscriptions, [ {id:1}, {id:2} ]);
+      assert.eql(subscriptions.map(function(value) { return value.attributes }), 
+                 [ {id:1}, {id:2} ]);
       gently.verify();
     });
 

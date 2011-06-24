@@ -6,6 +6,28 @@ var app = require('../app'),
 
 module.exports = {
 
+  'GET /subscriptions returns JSON': function() {
+    var attributes = { phone: '+14150000000', lat: '37.761216', lng: '-122.43953' };
+    gently.expect(Subscription, 'findAll', function(callback) {
+      callback([ new Subscription(attributes) ]);
+    });
+
+    assert.response(app, {
+      url: '/subscriptions',
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    }, {
+      status: 200,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' }
+    },
+    function(response) {
+      data = JSON.parse(response.body);
+      assert.eql(data, [ attributes ]);
+    });
+
+  },
+
+ 
   'POST /subscriptions creates subscription': function() {
     var attributes = { phone: '+14150000000', lat: '37.761216', lng: '-122.43953' };
     gently.expect(Subscription, 'create', function(attributes, callback) {
@@ -23,8 +45,7 @@ module.exports = {
     },
     function(response) {
       data = JSON.parse(response.body);
-      assert.equal(data.phone, attributes.phone);
-      gently.verify();
+      assert.eql(data, attributes);
     });
 
   },
@@ -41,7 +62,7 @@ module.exports = {
   },
 
   'DELETE /subscriptions removes subscription': function() {
-    gently.expect(Subscription, 'deleteAll', function(attributes, callback) {
+    gently.expect(Subscription, 'deleteAll', function(callback) {
       callback();
     });
 
@@ -54,7 +75,6 @@ module.exports = {
       headers: { 'Content-Type': 'application/json; charset=utf-8' }
     },
     function(response) {
-      gently.verify();
     });
 
   },

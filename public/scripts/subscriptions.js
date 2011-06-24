@@ -42,7 +42,7 @@ $(function() {
         accuracy: data.position.coords.accuracy
       };
       var currentAccuracy = parseInt($('#location .accuracy').text());
-      // $('#subscriptions').after("<div>Got update " + JSON.stringify(position) + "</div>");
+      $('#location').after("<div>Got update " + JSON.stringify(position) + "</div>");
       if (position.accuracy <= 1000 && position.accuracy <= currentAccuracy) {
         if (position.accuracy < 20) {
            navigator.geolocation.clearWatch(watchId);

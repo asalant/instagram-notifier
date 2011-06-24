@@ -44,7 +44,7 @@ Subscription.findAll = function(callback) {
       client.mget(keys, function(error, values) {
         client.quit();
         subscriptions = values.map(function(value) {
-          return JSON.parse(value);
+          return new Subscription(JSON.parse(value));
         });
         callback(subscriptions);
       });
@@ -101,3 +101,6 @@ Subscription.prototype.notify = function(posts, callback) {
   }
 }
 
+Subscription.prototype.toJSON = function() {
+  return this.attributes;
+}
