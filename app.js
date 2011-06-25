@@ -41,9 +41,14 @@ app.configure('production', function(){
 // List all subscriptions
 app.get('/subscriptions', function(request, response) {
   helpers.debug("GET " + request.url); 
-  Subscription.findAll(function(subscriptions) {
-    response.send(subscriptions);
-  });
+  if (request.is('json')) {
+    Subscription.findAll(function(subscriptions) {
+      response.send(subscriptions);
+    });
+  }
+  else {
+    response.render('subscriptions/index.jade');
+  }
 });
 
 // Create a new subscription

@@ -6,7 +6,21 @@ var app = require('../app'),
 
 module.exports = {
 
-  'GET /subscriptions returns JSON': function() {
+  'GET /subscriptions returns HTML': function() {
+    assert.response(app, {
+      url: '/subscriptions',
+      method: 'GET',
+      headers: { 'Content-Type': 'text/html' }
+    }, {
+      status: 200,
+      headers: { 'Content-Type': 'text/html; charset=utf-8' }
+    },
+    function(response) {
+    });
+
+  },
+
+ 'GET /subscriptions returns JSON': function() {
     var attributes = { phone: '+14150000000', lat: '37.761216', lng: '-122.43953' };
     gently.expect(Subscription, 'findAll', function(callback) {
       callback([ new Subscription(attributes) ]);
