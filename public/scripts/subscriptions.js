@@ -31,10 +31,6 @@ $(function() {
     });
   });
 
-  $('#unfollow.button').bind('click', function() {
-    $(document).trigger('removeSubscriptions');
-  });
-
   $(document).bind('located', function(event, data) {
     if (data.position) {
       var position = { 
@@ -74,17 +70,7 @@ $(function() {
   });
 
   $(document).bind('subscriptionsRemoved', function(event, data) {
-    $('#subscriptions').hide();
     $('#subscriptions .subscription').remove();
-  });
-
-  $(document).bind('removeSubscriptions', function(event, data) {
-    $.ajax({
-      type: 'DELETE',
-      success: function(data) {
-        $(document).trigger('subscriptionsRemoved');
-      }
-    });
   });
 
   $(document).bind('subscriptionCreated', function(event, data) {
