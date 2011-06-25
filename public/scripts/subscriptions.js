@@ -87,8 +87,6 @@ $(function() {
     });
   });
 
-
-
   $(document).bind('subscriptionCreated', function(event, data) {
     $('#subscriptions').show();
     appendSubscription(data.subscription);
@@ -96,11 +94,17 @@ $(function() {
 
   $(document).bind('createSubscription', function(event, data) {
     $.ajax({
-      type: 'POST',
-      data: JSON.stringify(data),
-      processData: false,
-      success: function(data) {
-        $(document).trigger('subscriptionCreated', { subscription: data });
+      type: 'DELETE',
+      success: function() {
+        $(document).trigger('subscriptionsRemoved');
+        $.ajax({
+          type: 'POST',
+          data: JSON.stringify(data),
+          processData: false,
+          success: function(data) {
+            $(document).trigger('subscriptionCreated', { subscription: data });
+          }
+        });
       }
     });
   });
@@ -109,8 +113,8 @@ $(function() {
   function appendSubscription(subscription) {
     $('#subscriptions ul').append(
       $('<li/>').append($('<a class="subscription"/>').
-      attr('href', createMapLink(subscription.lat, subscription.lng, 'id:' + subscription.geography_id)).
-      text(subscription.lat + ',' + subscription.lng + ' (id:' + subscription.geography_id + ')')
+      attr('href', createMapLink(subscription.lat, subscription.lng, 'id:' + subscription.object_id)).
+      text(subscription.lat + ',' + subscription.lng + ' (id:' + subscription.object_id + ')')
     ));
   }
 

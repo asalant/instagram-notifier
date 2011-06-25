@@ -16,8 +16,9 @@ Subscription.create = function(attributes, callback) {
 
   Instagram.subscribeToGeography(attributes, function(data) {
     subscription.attributes['id'] = data.id;
-    subscription.attributes['object'] = 'geography';
     subscription.attributes['status'] = 'active';
+    subscription.attributes['object'] = 'geography';
+    subscription.attributes['object_id'] = data.object_id;
     subscription.save(function() {
       callback(subscription);
     });
@@ -75,7 +76,7 @@ Subscription.prototype.phone = function() {
 Subscription.prototype.save = function(callback) {
   var self = this;
   var client = Redis.createClient();
-  client.set('subscription:' + this.attributes.id, JSON.stringify(this.attributes), function() {
+  client.set('subscription:' + this.attributes.id, JSON.stringify(this), function() {
     client.quit();
     if (callback) callback(self);
   });
