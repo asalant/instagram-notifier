@@ -14,6 +14,28 @@ $(function() {
       var attributes = this.toJSON();
       return 'http://maps.google.com/maps?z=14&q=' + attributes.lat + ',' + attributes.lng +
         '%20(' + escape('Found you here') + ')';
+    },
+
+    trackCurrentPosition: function() {
+      this.watchId = navigator.geolocation.watchPosition(function(position) {
+        // $('#location').after("<div>Got update " + JSON.stringify(position.coords) + "</div>");
+        var currentAccuracy = parseInt($('#location .accuracy').text());
+        if (position.coords.accuracy <= 1000 && position.coords.accuracy <= currentAccuracy) {
+         currentLocation.set({
+            lat: position.coords.latitude.toFixed(6),
+            lng: position.coords.longitude.toFixed(6),
+            accuracy: position.coords.accuracy
+          });
+        }
+      }, function() {
+        currentLocation.clear();
+      },
+      { frequency: 1000, enableHighAccuracy: true });
+
+    },
+
+    clearWatch: function() {
+      navigator.geolocation.clearWatch(this.watchId);
     }
 
   });
@@ -37,23 +59,7 @@ $(function() {
   var currentLocation = window.currentLocation = new Location;
   var currentSubscription = window.currentSubscription = new Subscription;
 
-  var watchId = navigator.geolocation.watchPosition(function(position) {
-    // $('#location').after("<div>Got update " + JSON.stringify(position.coords) + "</div>");
-    var currentAccuracy = parseInt($('#location .accuracy').text());
-    if (position.coords.accuracy <= 1000 && position.coords.accuracy <= currentAccuracy) {
-      if (position.coords.accuracy < 20) {
-        navigator.geolocation.clearWatch(watchId);
-      }
-      currentLocation.set({
-        lat: position.coords.latitude.toFixed(6),
-        lng: position.coords.longitude.toFixed(6),
-        accuracy: position.coords.accuracy
-      });
-    }
-  }, function() {
-    currentLocation.unset('position');
-  },
-  { frequency: 1000, enableHighAccuracy: true });
+  currentLocation.trackCurrentPosition();
 
   $('#location .found, #location .not_found').hide();
 
@@ -75,6 +81,14 @@ $(function() {
     }
   });
 
+  $('#unfollow.button').bind('click', function() {
+    $.ajax({
+      type: 'DELETE',
+      success: function() {
+        currentSubscription.clear();
+      }
+    });
+  });
 
   $('#follow.button').bind('click', function() {
     $(document).trigger('createSubscription', { 
@@ -109,6 +123,10 @@ $(function() {
 
     var position = location.toJSON();
     if (!_(position).isEmpty()) {
+      if (position.accuracy < 20) {
+        location.clearWatch();
+      }
+
       $('#location .lat').html(position.lat);
       $('#location .lng').html(position.lng);
       $('#location .accuracy').html(position.accuracy);
@@ -122,10 +140,20 @@ $(function() {
     }
   });
 
-  currentSubscription.bind('change', function(model) {
+  currentSubscription.bind('change', function(subscription) {
+     if (currentLocation.isNear(subscription))
+      $('#follow.button').text('Currently Watching');
+    else
+      $('#follow.button').text('Watch this Place!');
+
     $('#subscriptions ul').empty();
-    if (!_(model.toJSON()).isEmpty())
-      $('#subscriptions ul').append(model.toHTML());
+    if (!_(subscription.toJSON()).isEmpty()) {
+      $('#subscriptions ul').append(subscription.toHTML());
+      $('#unfollow.button').show();
+    }
+    else {
+      $('#unfollow.button').hide();
+    }
   });
 
   // http://www.movable-type.co.uk/scripts/latlong.html
