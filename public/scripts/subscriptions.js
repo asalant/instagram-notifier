@@ -115,12 +115,16 @@ $(function() {
     });
   });
 
-  currentLocation.bind('change', function(location) {
-    if (location.isNear(currentSubscription))
+  function updateWatchButton() {
+    if (currentLocation.isNear(currentSubscription))
       $('#follow.button').text('Currently Watching');
     else
       $('#follow.button').text('Watch this Place!');
+  }
+  currentSubscription.bind('change', updateWatchButton);
+  currentLocation.bind('change', updateWatchButton);
 
+  currentLocation.bind('change', function(location) {
     var position = location.toJSON();
     if (!_(position).isEmpty()) {
       if (position.accuracy < 20) {
@@ -141,11 +145,6 @@ $(function() {
   });
 
   currentSubscription.bind('change', function(subscription) {
-     if (currentLocation.isNear(subscription))
-      $('#follow.button').text('Currently Watching');
-    else
-      $('#follow.button').text('Watch this Place!');
-
     $('#subscriptions ul').empty();
     if (!_(subscription.toJSON()).isEmpty()) {
       $('#subscriptions ul').append(subscription.toHTML());
