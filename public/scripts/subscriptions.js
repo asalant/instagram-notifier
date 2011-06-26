@@ -93,8 +93,8 @@ $(function() {
           type: 'POST',
           data: JSON.stringify(data),
           processData: false,
-          success: function(data) {
-            currentSubscription.set(data.subscription);
+          success: function(subscription) {
+            currentSubscription.set(subscription);
           }
         });
       }
