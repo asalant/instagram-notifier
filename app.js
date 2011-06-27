@@ -9,6 +9,8 @@ var url = require('url'),
   Instagram = require('./app/instagram'),
   Subscription = require('./app/subscription');
 
+require('underscore');
+
 /**
  * Module dependencies.
  */
@@ -99,10 +101,9 @@ app.post('/callbacks/geo', function(request, response){
   // the Instagram API to get the data we want.
   var updates = request.body;
   console.log(updates);
-  for (index in updates){
-    var update = updates[index];
+  _(updates).each(function(update) {
     if (update['object'] != "geography")
-      continue;
+      return;
 
     console.log("Processing update: %j",update);
     var subscription = Subscription.find(update.subscription_id, function(subscription) {
@@ -111,7 +112,7 @@ app.post('/callbacks/geo', function(request, response){
         subscription.notify(posts);
       });
     });
-  }
+  });
   console.log("Processed %d updates", updates.length);
   response.send('OK');
 });
