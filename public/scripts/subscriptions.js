@@ -4,10 +4,18 @@ $(function() {
     boundary: 40,
 
     isNear: function(otherLocation) {
-      if (_(this.toJSON()).isEmpty() || _(otherLocation.toJSON()).isEmpty())
+      var distance = this.distance(otherLocation);
+      if (distance === null)
         return false;
       else
-        return this.boundary > calculateDistance(this.toJSON(), otherLocation.toJSON());
+        return this.boundary > distance;
+    },
+
+    distance: function(otherLocation) {
+      if (_(this.toJSON()).isEmpty() || _(otherLocation.toJSON()).isEmpty())
+        return null;
+      else
+        return calculateDistance(this.toJSON(), otherLocation.toJSON());
     },
 
     mapLink: function() {
@@ -117,7 +125,7 @@ $(function() {
 
   function updateWatchButton() {
     if (currentLocation.isNear(currentSubscription))
-      $('#follow.button').text('Currently Watching');
+      $('#follow.button').text('Currently Watching (' + currentLocation.distance(currentSubscription) + 'm)');
     else
       $('#follow.button').text('Watch this Place!');
   }
