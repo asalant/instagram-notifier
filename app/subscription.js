@@ -1,12 +1,13 @@
 var http = require('https'),
     querystring = require('querystring'),
+    _ = require('underscore'),
     Redis = require('./redis'),
     Instagram = require('./instagram'),
     twilio = new (require('../app/twilio.js'));
 
 
 function Subscription(attributes) {
-  this.attributes = attributes;
+  this.attributes = _({}).extend(attributes);
 };
 module.exports = Subscription;
 
@@ -15,10 +16,12 @@ Subscription.create = function(attributes, callback) {
   var subscription = new Subscription(attributes);
 
   Instagram.subscribeToGeography(attributes, function(data) {
-    subscription.attributes['id'] = data.id;
-    subscription.attributes['status'] = 'active';
-    subscription.attributes['object'] = 'geography';
-    subscription.attributes['object_id'] = data.object_id;
+    _(subscription.attributes).extend({
+      id: data.id,
+      status: 'active',
+      object: 'geography',
+      object_id: data.object_id
+    });
     subscription.save(function() {
       callback(subscription);
     });
@@ -83,15 +86,12 @@ Subscription.prototype.save = function(callback) {
 };
 
 Subscription.prototype.update = function(attributes, callback) {
-  for (attribute in attributes) {
-   this.attributes[attribute] = attributes[attribute];
-  }
+  this.attributes.extend(attributes);
   this.save(callback); 
 };
 
 Subscription.prototype.notify = function(posts, callback) {
-  for (var index in posts) {
-    var post = posts[index];
+  _(posts).each(function(post) {
     var sms = {
       to: this.attributes.phone,
       body: 'Update from @' + post.user.username + ': instagram://media?id=' + post.id
@@ -99,7 +99,7 @@ Subscription.prototype.notify = function(posts, callback) {
     twilio.sendSMS(sms, function() {
       console.log("Twilio: sent %j", sms);
     });
-  }
+  });
 }
 
 Subscription.prototype.toJSON = function() {

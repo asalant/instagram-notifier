@@ -19,7 +19,8 @@
 
 var http = require('https'),
     querystring = require('querystring'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    _ = require('underscore');
 
 
 function Instagram() {}  
@@ -116,12 +117,9 @@ Instagram.deleteAllSubscriptions = function(responseCallback){
 };
 
 Instagram.getRecentForGeography = function (geographyId, options, responseCallback) {
-  var params = {
+  var params = _({
     client_id: this.CLIENT_ID
-  };
-  for (var p in options) {
-    params[p] = options[p];
-  }
+  }).extend(options);
  
   console.log("Instagram: getting recent updates for %j from ", params);
   

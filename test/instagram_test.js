@@ -10,7 +10,7 @@ module.exports = {
     gently.expect(Instagram, 'createRequest', function(options, callback) {
       var request = {};
       gently.expect(request, 'write', function(data) {
-        assert.includes(data, 'lat=1&lng=2&radius=500');
+        assert.includes(data, 'lat=1&lng=2&radius=100');
       });
       gently.expect(request, 'end');
       return request;

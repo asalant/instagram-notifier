@@ -6,7 +6,7 @@ var Subscription = require('../app/subscription'),
     Redis = require('../app/redis');
 
 module.exports = {
-  
+
   'creates subscription': function() {
     gently.expect(Instagram, 'subscribeToGeography', function(params) {
       assert.isNotNull(params.lat);

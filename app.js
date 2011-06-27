@@ -4,12 +4,12 @@
 
 
 var url = require('url'),
-  settings = require('./app/settings'),
-  helpers = require('./app/helpers'),
-  Instagram = require('./app/instagram'),
-  Subscription = require('./app/subscription');
+    _ = require('underscore'),
+    settings = require('./app/settings'),
+    helpers = require('./app/helpers'),
+    Instagram = require('./app/instagram'),
+    Subscription = require('./app/subscription');
 
-require('underscore');
 
 /**
  * Module dependencies.
