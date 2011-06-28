@@ -107,7 +107,6 @@ app.post('/callbacks/geo', function(request, response){
 
     console.log("Processing update: %j",update);
     var subscription = Subscription.find(update.subscription_id, function(subscription) {
-      subscription.update({ geography_id: update.object_id });
       Instagram.getRecentForGeography(update.object_id, { count: 1 }, function(posts) {
         subscription.notify(posts);
       });

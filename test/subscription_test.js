@@ -48,6 +48,22 @@ module.exports = {
     });
   },
 
+
+  'gets latest post': function() {
+    gently.expect(Instagram, 'getRecentForGeography', function(object_id, params, callback) {
+      assert.equal(1, object_id);
+      assert.eql({ count: 1 }, params);
+      callback([ { id: 1 }, { id: 2 }]);
+    });
+
+
+    var subscription = new Subscription({ object_id: 1 });
+    subscription.getLatestPost(function(post) {
+      assert.eql({ id: 1 }, post);
+    });
+
+  },
+
   'finds a subscription': function() {
     var client = {};
     gently.expect(Redis, 'createClient', function() {

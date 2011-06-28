@@ -86,7 +86,7 @@ Subscription.prototype.save = function(callback) {
 };
 
 Subscription.prototype.update = function(attributes, callback) {
-  this.attributes.extend(attributes);
+  _(this.attributes).extend(attributes);
   this.save(callback); 
 };
 
@@ -99,6 +99,12 @@ Subscription.prototype.notify = function(posts, callback) {
     twilio.sendSMS(sms, function() {
       console.log("Twilio: sent %j", sms);
     });
+  });
+}
+
+Subscription.prototype.getLatestPost = function(callback) {
+  Instagram.getRecentForGeography(this.attributes.object_id, { count: 1 }, function(posts) {
+    callback(_(posts).first());
   });
 }
 
