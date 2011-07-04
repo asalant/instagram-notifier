@@ -10,20 +10,19 @@ var http = require('https'),
     querystring = require('querystring');
 
 
-function Twilio() {
+function Twilio() {}
+module.exports = Twilio;
+
+Twilio.configure = function(options) {
   this.ACCOUNT_SID = process.env.TW_ACCOUNT_SID;
   this.AUTH_TOKEN = process.env.TW_AUTH_TOKEN;
   this.API_HOST = 'api.twilio.com';
   this.API_BASE = '/2010-04-01/Accounts/' + this.ACCOUNT_SID;
   this.FROM_PHONE = '+14155992671';
-};
-module.exports = Twilio;
-
-Twilio.prototype.echo = function(str) {
-  return str;
 }
+Twilio.configure();
 
-Twilio.prototype.sendSMS = function(params, responseCallback){
+Twilio.sendSMS = function(params, responseCallback){
   var data = querystring.stringify({
     From: this.FROM_PHONE,
     To: params['to'],
@@ -64,6 +63,6 @@ Twilio.prototype.sendSMS = function(params, responseCallback){
   request.end();
 }
 
-Twilio.prototype.createRequest = function(options, callback) {
+Twilio.createRequest = function(options, callback) {
   return http.request(options, callback);
 };

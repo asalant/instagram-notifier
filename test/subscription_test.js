@@ -3,6 +3,7 @@ var assert = require('assert'),
 
 var Subscription = require('../app/subscription'),
     Instagram = require('../app/instagram'),
+    Twilio = require('../app/twilio'),
     Redis = require('../app/redis');
 
 module.exports = {
@@ -155,6 +156,15 @@ module.exports = {
     Subscription.deleteAll(function() {
       gently.verify();
     });
+  },
+
+
+ 'sends notifications': function() {
+    gently.expect(Twilio, 'sendSMS', function(sms) {
+      assertEqual('123', sms.to);
+    });
+
+    new Subscription({ phone: '123' }).notify([{ id: 1, user: { username: 'name' } }]);
   },
 
 
