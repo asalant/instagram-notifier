@@ -159,13 +159,13 @@ module.exports = {
   },
 
 
- 'sends notifications': function() {
-    gently.expect(Twilio, 'sendSMS', function(sms) {
-      assertEqual('123', sms.to);
-    });
+ // 'sends notifications': function() {
+ //    gently.expect(Twilio, 'sendSMS', 2, function(sms) {
+ //      assertEqual('123', sms.to);
+ //    });
 
-    new Subscription({ phone: '123' }).notify([{ id: 1, user: { username: 'name' } }]);
-  },
+ //    new Subscription({ phone: '123' }).notify([{ id: 1, user: { username: 'name' } }]);
+ //  },
 
 
 
