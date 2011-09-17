@@ -64,6 +64,9 @@ app.post('/subscriptions', function(request, response) {
     return;
   }
 
+  // response.send(new Subscription(request.body));
+  // return;
+
   Subscription.create(request.body, function(subscription) {
     console.log("Created Subscription: %j", subscription);
     response.send(subscription);

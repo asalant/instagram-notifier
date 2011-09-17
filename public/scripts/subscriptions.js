@@ -125,7 +125,8 @@ $(function() {
 
   function updateWatchButton() {
     if (currentLocation.isNear(currentSubscription))
-      $('#follow.button').text('Currently Watching (' + currentLocation.distance(currentSubscription) + 'm)');
+      $('#follow.button').text('Currently Watching (' 
+                               + Math.round(currentLocation.distance(currentSubscription)) + 'm)');
     else
       $('#follow.button').text('Watch this Place!');
   }
@@ -181,7 +182,7 @@ $(function() {
       Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
     var d = R * c;
-    return d;
+    return d*1000;
   }    
 
 });
